@@ -11,11 +11,18 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class Sound {
+/**
+ * small utility Class for playing short SoundEffects
+ * @author Lenardt Gerhardts
+ * @since 17.0.1
+ */
+public class SoundEffect {
     private Clip audioClip;
     private File audioFile;
 
-    public Sound(String filepath){
+    private final double MICRO_TO_MILLIS = 0.001;
+
+    public SoundEffect(String filepath){
         audioFile = new File(filepath);
         createClip();
     }
@@ -36,10 +43,15 @@ public class Sound {
         return null;
     }
 
-    public Clip getClip(){
+    private Clip getClip(){
         return this.audioClip;
     }
 
+    /**
+     * plays the the Sound File defined in the Constructor
+     * @author Lenardt Gerhardts
+     * @since 1.17.1
+     */
     public void play(){
         createClip();
         if(getClip() != null){
@@ -48,8 +60,26 @@ public class Sound {
         }
     }
 
+    /**
+     * stops the soundeffect from being played further
+     * @author Lenardt Gerhardts
+     * @since 1.17.1
+     */
     public void stop(){
         if(getClip() != null)
             getClip().stop();
+    }
+
+    /**
+     * returns Soundeffect Length in Milliseconds
+     * @return long
+     * @author Lenardt Gerhardts
+     * @since 1.17.1
+     */
+    public long getMilliseconds(){
+        if(this.getClip() != null)
+            return (long)(this.getClip().getMicrosecondLength() * MICRO_TO_MILLIS);
+
+        return 0;
     }
 }

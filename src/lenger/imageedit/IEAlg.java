@@ -3,6 +3,11 @@ package lenger.imageedit;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 
+/**
+ * A collection of predefined Algorhithms
+ * @author Lenardt Gerhardts
+ * @since 17.0.1
+ */
 public class IEAlg {
     public static BufferedImage contrastMask(BufferedImage img, IEAInfo maInf){
         BufferedImage copyImg = new BufferedImage(img.getWidth(),img.getHeight(),BufferedImage.TYPE_INT_ARGB);
