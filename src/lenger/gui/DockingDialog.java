@@ -78,21 +78,25 @@ public class DockingDialog extends JDialog implements ComponentListener{
      */
     private void move(){
         switch(this.position){
-            default -> {
+            default: {
                 this.setSize(new Dimension(this.getParent().getWidth(), (int)(this.getParent().getHeight() * this.extendPercent)));
                 this.setLocation(this.getParent().getLocation().x,-this.getHeight() + this.getParent().getLocation().y);
+                break;
             }
-            case SOUTH -> {
+            case SOUTH: {
                 this.setLocation(this.getParent().getLocation().x, this.getParent().getHeight() + this.getParent().getLocation().y);
                 this.setSize(new Dimension(this.getParent().getWidth(), (int)(this.getParent().getHeight() * this.extendPercent)));
+                break;
             }
-            case WEST -> {
+            case WEST: {
                 this.setSize(new Dimension((int)(this.getParent().getWidth() * this.extendPercent), this.getParent().getHeight()));
                 this.setLocation(-this.getWidth() + this.getParent().getLocation().x, this.getParent().getLocation().y);
+                break;
             }
-            case EAST -> {
+            case EAST : {
                 this.setLocation(this.getParent().getLocation().x + this.getParent().getWidth(), this.getParent().getLocation().y);
                 this.setSize(new Dimension((int)(this.getParent().getWidth() * this.extendPercent),this.getParent().getHeight()));
+                break;
             }
         }
 
