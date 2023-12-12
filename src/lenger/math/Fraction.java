@@ -1,21 +1,24 @@
 package lenger.math;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
- * Implements Fraction representation for {@link Number}.
+ * Implements Fraction representation for a {@link Number}.
  * @author Lenardt Gerhardts
  * @since 21
  */
-public class Fraction<N extends Number> extends Number{
+@SuppressWarnings("unchecked")
+public class Fraction<OverType extends Number, UnderType extends Number> extends Number implements Comparable<Fraction<?,?>>{
     
-    private N over, under;
+    private OverType over;
+    private UnderType under;
 
     /**
      * Creates Fraction {@code (0 | 1)}.
      */
-    @SuppressWarnings("unchecked")
     public Fraction(){
-        set((N)new BigDecimal(0),(N)new BigDecimal(1));
+        set((OverType)new BigDecimal(0),(UnderType)new BigDecimal(1));
     }
 
     /**
@@ -23,7 +26,7 @@ public class Fraction<N extends Number> extends Number{
      * @param over
      * @param under
      */
-    public Fraction(N over, N under){
+    public Fraction(OverType over, UnderType under){
         set(over, under);
     }
 
@@ -31,9 +34,8 @@ public class Fraction<N extends Number> extends Number{
      * Creates Fraction {@code (toFrac | 1)}.
      * @param toFrac
      */
-    @SuppressWarnings("unchecked")
     public Fraction(Number toFrac){
-        set((N)new BigDecimal(toFrac.toString()));
+        set((OverType)new BigDecimal(toFrac.toString()));
     }
 
     /**
@@ -60,16 +62,15 @@ public class Fraction<N extends Number> extends Number{
      * Sets this Fraction {@code (toFrac | 1)}.
      * @param toFrac
      */
-    @SuppressWarnings("unchecked")
-    public void set(N number){
-        this.set(number, (N)new BigDecimal(1));
+    public void set(OverType number){
+        this.set(number, (UnderType)new BigDecimal(1));
     }
 
     /**
      * Sets this Fraction {@code (over | under)}. Throws {@link IllegalStateException} if {@code under == 0}. Automatically uses {@link Fraction#simplify()}
      * @param toFrac
      */
-    public void set(N over, N under){
+    public void set(OverType over, UnderType under){
         if(under.doubleValue() == 0)
             throw new IllegalStateException("Member \"under\" is not allowed to be Zero");
 
@@ -92,12 +93,11 @@ public class Fraction<N extends Number> extends Number{
     /**
      * Simplifys this Fraction as low as Possible without using Decimals
      */
-    @SuppressWarnings("unchecked")
     public void simplify(){
         Long gcd = gcd(over.longValue(), under.longValue());
 
-        over = (N)new BigDecimal(over.toString()).divide(new BigDecimal(gcd.toString()));
-        under = (N)new BigDecimal(under.toString()).divide(new BigDecimal(gcd.toString()));
+        over = (OverType)new BigDecimal(over.toString()).divide(new BigDecimal(gcd.toString()),  RoundingMode.HALF_UP);
+        under = (UnderType)new BigDecimal(under.toString()).divide(new BigDecimal(gcd.toString()), RoundingMode.HALF_UP);
     }
 
     /**
@@ -106,8 +106,8 @@ public class Fraction<N extends Number> extends Number{
      * @param number
      * @return this
      */
-    public <T extends Number> Fraction<N> add(T number){
-        return add(new Fraction<N>(number));
+    public <T extends Number> Fraction<OverType, UnderType> add(T number){
+        return add(new Fraction<OverType, UnderType>(number));
     }
 
     /**
@@ -116,16 +116,15 @@ public class Fraction<N extends Number> extends Number{
      * @param frac
      * @return this
      */
-    @SuppressWarnings("unchecked")
-    public <T extends Number> Fraction<N> add(Fraction<T> frac){
+    public Fraction<OverType, UnderType> add(Fraction<?,?> frac){
         BigDecimal overA = new BigDecimal(this.over.toString());
         BigDecimal underA = new BigDecimal(this.under.toString());
 
         BigDecimal overB = new BigDecimal(frac.over.toString());
         BigDecimal underB = new BigDecimal(frac.under.toString());
 
-        over = (N)overA.multiply(underB).add(overB.multiply(underA));
-        under = (N)underA.multiply(underB);
+        over = (OverType)overA.multiply(underB).add(overB.multiply(underA));
+        under = (UnderType)underA.multiply(underB);
 
         simplify();
 
@@ -138,8 +137,8 @@ public class Fraction<N extends Number> extends Number{
      * @param number
      * @return this
      */
-    public <T extends Number> Fraction<N> sub(T number){
-        return sub(new Fraction<N>(number));
+    public <T extends Number> Fraction<OverType, UnderType> sub(T number){
+        return sub(new Fraction<OverType, UnderType>(number));
     }
 
     /**
@@ -148,16 +147,15 @@ public class Fraction<N extends Number> extends Number{
      * @param frac
      * @return this
      */
-    @SuppressWarnings("unchecked")
-    public <T extends Number> Fraction<N> sub(Fraction<T> frac){
+    public Fraction<OverType, UnderType> sub(Fraction<?,?> frac){
         BigDecimal overA = new BigDecimal(this.over.toString());
         BigDecimal underA = new BigDecimal(this.under.toString());
 
         BigDecimal overB = new BigDecimal(frac.over.toString());
         BigDecimal underB = new BigDecimal(frac.under.toString());
 
-        over = (N)overA.multiply(underB).subtract(overB.multiply(underA));
-        under = (N)underA.multiply(underB);
+        over = (OverType)overA.multiply(underB).subtract(overB.multiply(underA));
+        under = (UnderType)underA.multiply(underB);
 
         simplify();
 
@@ -170,8 +168,8 @@ public class Fraction<N extends Number> extends Number{
      * @param number
      * @return this
      */
-    public <T extends Number> Fraction<N> mul(T number){
-        return mul(new Fraction<N>(number));
+    public <T extends Number> Fraction<OverType, UnderType> mul(T number){
+        return mul(new Fraction<OverType, UnderType>(number));
     }
 
     /**
@@ -180,16 +178,15 @@ public class Fraction<N extends Number> extends Number{
      * @param frac
      * @return this
      */
-    @SuppressWarnings("unchecked")
-    public <T extends Number> Fraction<N> mul(Fraction<T> frac) {
+    public Fraction<OverType, UnderType> mul(Fraction<?,?> frac) {
         BigDecimal overA = new BigDecimal(this.over.toString());
         BigDecimal underA = new BigDecimal(this.under.toString());
 
         BigDecimal overB = new BigDecimal(frac.over.toString());
         BigDecimal underB = new BigDecimal(frac.under.toString());
 
-        over = (N)overA.multiply(overB);
-        under = (N)underA.multiply(underB);
+        over = (OverType)overA.multiply(overB);
+        under = (UnderType)underA.multiply(underB);
 
         simplify();
 
@@ -202,8 +199,8 @@ public class Fraction<N extends Number> extends Number{
      * @param number
      * @return this
      */
-    public <T extends Number> Fraction<N> div(T number){
-        return div(new Fraction<T>(number));
+    public <T1 extends Number> Fraction<OverType, UnderType> div(T1 number){
+        return div(new Fraction<T1, UnderType>(number));
     }
 
     /**
@@ -212,16 +209,15 @@ public class Fraction<N extends Number> extends Number{
      * @param frac
      * @return this
      */
-    @SuppressWarnings("unchecked")
-    public <T extends Number> Fraction<N> div(Fraction<T> frac){
+    public Fraction<OverType, UnderType> div(Fraction<?,?> frac){
         BigDecimal overA = new BigDecimal(this.over.toString());
         BigDecimal underA = new BigDecimal(this.under.toString());
 
         BigDecimal overB = new BigDecimal(frac.over.toString());
         BigDecimal underB = new BigDecimal(frac.under.toString());
 
-        over = (N)overA.multiply(underB);
-        under = (N)underA.multiply(overB);
+        over = (OverType)overA.multiply(underB);
+        under = (UnderType)underA.multiply(overB);
 
         simplify();
 
@@ -233,17 +229,24 @@ public class Fraction<N extends Number> extends Number{
      * @param base
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public Fraction<N> setBase(Integer base){
-        over = (N)new BigDecimal(over.toString()).multiply(new BigDecimal(base / under.doubleValue()));
-        under = (N)new BigDecimal(base);
+    public Fraction<OverType, UnderType> setBase(Integer base){
+        over = (OverType)new BigDecimal(over.toString()).multiply(new BigDecimal(base / under.doubleValue()));
+        under = (UnderType)new BigDecimal(base);
 
         return this;
     }
 
+    /**
+     * Converts Fraction to {@link String} in the Format {@code ( over / under)}.
+     * @return String
+     */
+    public String toFractionString(){
+        return "( %s / %s )".formatted(over.toString(), under.toString());
+    }
+
     @Override
     public String toString(){
-        return "{ %s | %s }".formatted(over.doubleValue(), under.doubleValue());
+        return "" + (over.doubleValue() / under.doubleValue());
     }
 
     @Override
@@ -264,5 +267,18 @@ public class Fraction<N extends Number> extends Number{
     @Override
     public double doubleValue() {
         return over.doubleValue() / under.doubleValue();
+    }
+
+    @Override
+    public int compareTo(Fraction<?, ?> frac) {
+        if(frac == null)
+            return Integer.MIN_VALUE;
+
+        return (int)((this.over.doubleValue() * frac.under.doubleValue()) - (frac.over.doubleValue() * this.under.doubleValue()));
+    }
+
+    @Override
+    public Object clone(){
+        return new Fraction<OverType, UnderType>(this.over, this.under);
     }
 }
