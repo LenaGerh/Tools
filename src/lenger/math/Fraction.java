@@ -87,7 +87,7 @@ public class Fraction<OverType extends Number, UnderType extends Number> extends
      * @return long
      */
     public static long gcd(long a, long b) {
-        return b == 0 ? a : gcd(b, a % b);
+        return a == 0 ? b : gcd(a, b % a);
     }
 
     /**
